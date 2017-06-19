@@ -1,0 +1,36 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="lcl.android.spider.web.network">
+
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- NPush and GCM connects to Google Services. -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 폰의 국가정보, 통신사 정보를 가져오기 위해 사용 -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" /> <!-- 주소록 읽기 -->
+    <uses-permission android:name="android.permission.SEND_SMS" /> <!-- 문자 발송 허용 -->
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.BOOT_COMPLETED" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/spider_web"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".activitys.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name="lcl.android.spider.web.network.receiver.SmsReceiver">
+            <intent-filter android:priority="9999">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>
