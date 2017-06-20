@@ -21,9 +21,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import lcl.android.spider.web.network.R;
+import lcl.android.spider.web.network.constants.CommonConstants;
 import lcl.android.spider.web.network.receiver.SmsSentReceiver;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -42,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final int REQUEST_FOR_CONTACT = 10;
     private final int REQUEST_FOR_VOICE = 20;
     private final int REQUEST_FOR_PERMISSION = 200;
+
+    private String sender = "이회장";
 
     private Intent intent;
     private SmsSentReceiver smsSentReceiver = new SmsSentReceiver();
@@ -152,7 +157,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent("SENT_SMS_ACTION");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(receiver.getText().toString(), null, content.getText().toString(), pendingIntent, null);
+            String message =  createMessage(content.getText().toString());
+            smsManager.sendTextMessage(receiver.getText().toString(), null, message, pendingIntent, null);
             } else {
                 requestPermission();
             }
@@ -197,4 +203,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         unregisterReceiver(smsSentReceiver);
     }
 
+    private String createMessage(String message) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss a");
+        String curTimeStr = format.format(cal.getTime());
+        long  curTime = System.currentTimeMillis();
+        message += "\n";
+        message += "From." + sender + "," + curTimeStr;
+        message += "\n";
+        message += "[" + CommonConstants.GROUP_SECURE_KEY + "*" + curTime + "]";
+        return message;
+    }
+
+
 }
+
