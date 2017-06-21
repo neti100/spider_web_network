@@ -1,19 +1,11 @@
 package lcl.android.spider.web.network.receiver;
 
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.telephony.SmsManager;
-import android.telephony.SmsMessage;
-import android.telephony.TelephonyManager;
 import android.widget.Toast;
-
-import lcl.android.spider.web.network.activitys.MainActivity;
-
-import static android.content.Context.TELEPHONY_SERVICE;
 
 /**
  * Created by CHS on 2017-06-19.

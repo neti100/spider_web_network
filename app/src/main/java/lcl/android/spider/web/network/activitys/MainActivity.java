@@ -21,13 +21,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import lcl.android.spider.web.network.R;
 import lcl.android.spider.web.network.constants.CommonConstants;
 import lcl.android.spider.web.network.receiver.SmsSentReceiver;
+import lcl.android.spider.web.network.util.AES256Util;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -45,8 +54,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final int REQUEST_FOR_CONTACT = 10;
     private final int REQUEST_FOR_VOICE = 20;
     private final int REQUEST_FOR_PERMISSION = 200;
-
-    private String sender = "이회장";
 
     private Intent intent;
     private SmsSentReceiver smsSentReceiver = new SmsSentReceiver();
@@ -153,12 +160,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         } else if(v == sendButton) {
             if (sendSmsPermission && phonePermission) {
-            TelephonyManager telephonyManager = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
-            Intent intent = new Intent("SENT_SMS_ACTION");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            SmsManager smsManager = SmsManager.getDefault();
-            String message =  createMessage(content.getText().toString());
-            smsManager.sendTextMessage(receiver.getText().toString(), null, message, pendingIntent, null);
+                TelephonyManager telephonyManager = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
+                Intent sentIntent = new Intent(CommonConstants.SENT_SMS_ACTION);
+                Intent deliveryIntent = new Intent(CommonConstants.DELIVERED_SMS_ACTION);
+                PendingIntent sentPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, sentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent deliveryPpendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, deliveryIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                SmsManager smsManager = SmsManager.getDefault();
+                String message =  createMessage(content.getText().toString());
+                ArrayList<String> partMessage = smsManager.divideMessage(message);
+                if (partMessage.size() > 1) { // 보내는 문자열 길이에 따라 보내는 방식이 다름
+                    int numParts = partMessage.size();
+                    ArrayList<PendingIntent> sentIntents = new ArrayList<PendingIntent>();
+                    ArrayList<PendingIntent> deliveryIntents = new ArrayList<PendingIntent>();
+                    for (int i = 0; i < numParts; i++) {
+                        sentIntents.add(sentPendingIntent);
+                        deliveryIntents.add(deliveryPpendingIntent);
+                    }
+                    smsManager.sendMultipartTextMessage(receiver.getText().toString(), null, partMessage, sentIntents, deliveryIntents);
+                } else {
+                    smsManager.sendTextMessage(receiver.getText().toString(), null, message, sentPendingIntent, deliveryPpendingIntent);
+                }
             } else {
                 requestPermission();
             }
@@ -205,13 +227,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private String createMessage(String message) {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss a");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
         String curTimeStr = format.format(cal.getTime());
         long  curTime = System.currentTimeMillis();
         message += "\n";
-        message += "From." + sender + "," + curTimeStr;
+        message += "From." + CommonConstants.SENDER + "," + curTimeStr;
         message += "\n";
-        message += "[" + CommonConstants.GROUP_SECURE_KEY + "*" + curTime + "]";
+        try {
+            AES256Util aes256 = new AES256Util(CommonConstants.SECURE_KEY);
+            String sendKey = CommonConstants.GROUP_NAME + "*" + curTime;
+            String encSendKey = aes256.aesEncode(sendKey);
+            message += "[" + encSendKey + "," + curTime + "]";
+        } catch (UnsupportedEncodingException e) {
+            message = "";
+        } catch (NoSuchAlgorithmException e) {
+            message = "";
+        } catch (InvalidKeyException e) {
+            message = "";
+        } catch (InvalidAlgorithmParameterException e) {
+            message = "";
+        } catch (NoSuchPaddingException e) {
+            message = "";
+        } catch (BadPaddingException e) {
+            message = "";
+        } catch (IllegalBlockSizeException e) {
+            message = "";
+        }
         return message;
     }
 
