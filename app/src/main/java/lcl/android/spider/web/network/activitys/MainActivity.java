@@ -38,7 +38,7 @@ import lcl.android.spider.web.network.constants.CommonConstants;
 import lcl.android.spider.web.network.receiver.SmsSentReceiver;
 import lcl.android.spider.web.network.util.AES256Util;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener { 
 
     Button sendButton;
     Button contactButton;
