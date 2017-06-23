@@ -48,11 +48,6 @@ public class SenderActivity extends AppCompatActivity implements View.OnClickLis
     Button sendButton;
     EditText content;
 
-    boolean sendSmsPermission;
-    boolean receiveSmsPermission;
-    boolean readSmsPermission;
-    boolean phonePermission;
-
     private final int REQUEST_FOR_CONTACT = 10;
     private final int REQUEST_FOR_VOICE = 20;
     private final int REQUEST_FOR_PERMISSION = 200;
@@ -76,29 +71,6 @@ public class SenderActivity extends AppCompatActivity implements View.OnClickLis
 
         sendButton.setOnClickListener(this);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            phonePermission = true;
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-            sendSmsPermission = true;
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
-            receiveSmsPermission = true;
-        }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-            readSmsPermission = true;
-        }
-
-        // 만약 disable로 되어있는 상태라면 runtime error 유발
-        // user에게 toast로 알려주고 끝내도 되지만, 강제로 permission을 조정할 수는 없으니
-        // permission 허가를 요청하도록하자
-        // user가 permission 허가를 하기 위해선 다시 환경설정으로 가기는 불편하니까
-        // 내 app에서 dialog로 permission 조정하도록 system dialog로 제공하자
-        if (phonePermission == false || sendSmsPermission == false || receiveSmsPermission == false || readSmsPermission == false) {
-            requestPermission();
-        }
 
 
         ListView receiverListView = (ListView) findViewById(R.id.receiverListView);
@@ -119,47 +91,12 @@ public class SenderActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    private void requestPermission() {
-        // user에게 permission허용 dialog를 띄우는 역할
-        ActivityCompat.requestPermissions(this, new String[]{
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.SEND_SMS,
-                Manifest.permission.RECEIVE_SMS,
-                Manifest.permission.READ_SMS
-        }, REQUEST_FOR_PERMISSION);
-    }
 
-    // requestPermission함수를 이용해서 유저에게 permission 조정 dialog를 띄웠다고 하더라도
-    // 여전히 유저가 거부했을 수도 있다.
-    // dialog를 띄웠다고 끝이 아니라 사후 추적해야 한다.
-    // requestPermission 함수에 의한 dialog 작업이 끝나는 순간 자동 호출
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_FOR_PERMISSION && grantResults.length > 0) {
 
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                phonePermission = true;
-            }
 
-            if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                sendSmsPermission = true;
-            }
-
-            if (grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                receiveSmsPermission = true;
-            }
-
-            if (grantResults[3] == PackageManager.PERMISSION_GRANTED) {
-                readSmsPermission = true;
-            }
-
-        }
-    }
 
     public void onClick(View v) {
         if (v == sendButton) {
-            if (sendSmsPermission && phonePermission) {
                 TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
                 Intent sentIntent = new Intent(CommonConstants.SENT_SMS_ACTION);
                 Intent deliveryIntent = new Intent(CommonConstants.DELIVERED_SMS_ACTION);
@@ -192,9 +129,7 @@ public class SenderActivity extends AppCompatActivity implements View.OnClickLis
                     }
 
                 }
-            } else {
-                requestPermission();
-            }
+
         }
     }
 
