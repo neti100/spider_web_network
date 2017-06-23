@@ -8,6 +8,10 @@
     <TextView
         android:id="@+id/group_name_text"
         android:layout_width="0dp"
+        android:layout_marginLeft="5dp"
+        android:textSize="20sp"
+        android:ellipsize="marquee"
+        android:lines="1"
         android:layout_height="wrap_content"
         android:layout_weight="0.4"
         />
@@ -18,21 +22,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
-        android:text="Send"/>
+        android:text="발송"/>
 
     <Button
         android:id="@+id/group_modify_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
-        android:text="Modify"/>
+        android:text="편집"/>
 
     <Button
         android:id="@+id/group_delete_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
-        android:text="Delete"/>
+        android:text="삭제"/>
 
 
 </LinearLayout>

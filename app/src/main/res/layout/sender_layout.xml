@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:layout_margin="15dp"
     android:background="#FFFFFF">
 
     <View
@@ -19,20 +20,19 @@
         android:orientation="horizontal"
         android:layout_gravity="center_vertical">
 
-        <Button
-            android:id="@+id/button_contacts"
-            style="@style/customBtnStyle1"
+        <TextView
+            android:text="메세지 발송"
             android:layout_width="135dp"
             android:layout_height="40dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="25dp"
-            android:text="주소록" />
+            android:layout_marginLeft="15dp"
+            android:gravity="center_vertical"
+            android:textColor="#454545"
+            android:textSize="17sp"/>
 
         <Button
             android:id="@+id/button_send"
             style="@style/customBtnStyle2"
-            android:layout_width="135dp"
+            android:layout_width="95dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
@@ -59,7 +59,7 @@
             android:gravity="bottom"
             android:text="메세지 입력"
             android:textColor="#8a8c96"
-            android:textSize="16sp"/>
+            android:textSize="17sp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -78,7 +78,7 @@
             android:gravity="top"
             android:layout_height="155dp"
             android:maxLines="10"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:background="@drawable/rounded_boarder_edittext">
             <requestFocus />
         </EditText>
@@ -104,7 +104,7 @@
             android:gravity="bottom"
             android:text="수신자 리스트"
             android:textColor="#8a8c96"
-            android:textSize="16sp"/>
+            android:textSize="17sp"/>
     </LinearLayout>
 
     <LinearLayout

@@ -50,7 +50,7 @@
             android:gravity="bottom"
             android:text="메세지 입력"
             android:textColor="#8a8c96"
-            android:textSize="16sp"/>
+            android:textSize="17sp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -69,7 +69,7 @@
             android:gravity="top"
             android:layout_height="155dp"
             android:maxLines="10"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:background="@drawable/rounded_boarder_edittext">
             <requestFocus />
         </EditText>
@@ -95,7 +95,7 @@
             android:gravity="bottom"
             android:text="수신자 리스트"
             android:textColor="#8a8c96"
-            android:textSize="16sp"/>
+            android:textSize="17sp"/>
     </LinearLayout>
 
     <LinearLayout

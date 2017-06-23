@@ -43,9 +43,10 @@
                 android:id="@+id/saveGroupSetting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="save" />
-
+                tools:layout_editor_absoluteY="8dp"
+                tools:layout_editor_absoluteX="8dp"
+                android:textSize="17sp"
+                android:text="저  장"/>
 
         </LinearLayout>
 
@@ -53,21 +54,24 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="horizontal"
-            android:layout_weight="0.1">
+            android:layout_weight="0.1"
+            android:weightSum="1">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:text="auto send" />
+                android:textSize="17sp"
+                android:text="자동 저장"
+                android:layout_weight="0.7"/>
 
             <ToggleButton
                 android:id="@+id/autoSend"
-                android:layout_width="match_parent"
+                android:layout_width="20dp"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="17sp"
                 android:checked="true"
-                android:text="autoSend" />
+                android:text="autoSend"
+                android:layout_weight="0.3"/>
 
 
         </LinearLayout>
@@ -82,14 +86,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:text="group_name" />
+                android:textSize="17sp"
+                android:text="그룹명" />
 
             <TextView
                 android:id="@+id/group_name_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:inputType="text"
                 android:visibility="gone"/>
 
@@ -97,7 +101,7 @@
                 android:id="@+id/group_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:inputType="text" />
 
         </LinearLayout>
@@ -112,15 +116,15 @@
                 android:id="@+id/addContact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:text="add contact" />
+                android:textSize="17sp"
+                android:text="전화번호 직접 입력" />
 
             <Button
                 android:id="@+id/addPhoneBook"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:text="show phone book" />
+                android:textSize="17sp"
+                android:text="주소록에서 선택" />
 
         </LinearLayout>
 
