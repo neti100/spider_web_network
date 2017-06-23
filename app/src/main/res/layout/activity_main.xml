@@ -20,23 +20,14 @@
         android:layout_gravity="center_vertical">
 
         <Button
-            android:id="@+id/button_contacts"
-            style="@style/customBtnStyle1"
-            android:layout_width="135dp"
-            android:layout_height="40dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="25dp"
-            android:text="주소록" />
-
-        <Button
             android:id="@+id/button_send"
             style="@style/customBtnStyle2"
-            android:layout_width="135dp"
+            android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="25dp"
+            android:layout_marginLeft="25dp"
             android:text="발송" />
     </RelativeLayout>
 

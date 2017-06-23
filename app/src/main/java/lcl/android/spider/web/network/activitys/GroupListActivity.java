@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import lcl.android.spider.web.network.R;
+import lcl.android.spider.web.network.listview.GroupListViewAdapter;
 import lcl.android.spider.web.network.model.Constants;
 
 public class GroupListActivity extends AppCompatActivity {
@@ -38,24 +39,16 @@ public class GroupListActivity extends AppCompatActivity {
         groupList = getGroupList();
 
         // 2. 어뎁터를 설정한다.
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, groupList);
+        GroupListViewAdapter adapter = new GroupListViewAdapter(GroupListActivity.this);
+        adapter.addGroup(groupList);
+
 
         // 3. 리스트 뷰에 어뎁터를 추가한다.
         ListView listView = (ListView) findViewById(R.id.group_list);
         listView.setAdapter(adapter);
 
-        // 4. 리스트 뷰에 클릭 이벤트를 추가한다.
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(GroupListActivity.this, GroupSettingActivity.class);
-                intent.putExtra(GROUP_NAME, groupList.get(position));
-                startActivity(intent);
-            }
-        });
-
-        // 5. 저장 버튼에 이벤트를 추가한다.
+        // 4. 추가 버튼에 이벤트를 추가한다.
         Button addGroup = (Button) findViewById(R.id.addGroup);
         addGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,21 +66,4 @@ public class GroupListActivity extends AppCompatActivity {
         return new LinkedList<String>(Arrays.asList(pref.getString(Constants.GROUP_LIST_KEY, "").split(Constants.GROUP_TOKEN)));
     }
 
-    // group 이름 추가하기
-    private void addGroup(String groupName) {
-        List<String> groupList = getGroupList();
-        groupList.add(groupName);
-
-        String t = "";
-
-        for (String group : groupList) {
-            t += group + Constants.GROUP_TOKEN;
-        }
-
-        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-
-        editor.putString(Constants.GROUP_LIST_KEY, t);
-        editor.commit();
-    }
 }

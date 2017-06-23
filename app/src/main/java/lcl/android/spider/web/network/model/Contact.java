@@ -3,6 +3,8 @@ package lcl.android.spider.web.network.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 /**
@@ -32,6 +34,11 @@ public class Contact implements Parcelable, Serializable {
         this.name = name;
         this.isChecked = isChecked;
         this.type = type;
+    }
+
+    @JsonIgnore
+    public String getPurePhoneNumber(){
+        return phoneNumber.replaceAll("[^\\d]", "");
     }
 
     public String getPhoneNumber() {
