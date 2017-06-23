@@ -62,6 +62,14 @@
                 android:textSize="16sp"
                 android:text="group_name" />
 
+            <TextView
+                android:id="@+id/group_name_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:inputType="text"
+                android:visibility="gone"/>
+
             <EditText
                 android:id="@+id/group_name"
                 android:layout_width="match_parent"

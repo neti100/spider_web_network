@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
 
 import lcl.android.spider.web.network.R;
 import lcl.android.spider.web.network.listview.ContactListViewAdapter;
@@ -36,6 +38,7 @@ public class GroupSettingActivity extends AppCompatActivity {
 
     private ListView listView;
     private ContactListViewAdapter adapter;
+    private String groupName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +55,14 @@ public class GroupSettingActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null) {
             try {
-                String groupName = intent.getStringExtra(GroupListActivity.GROUP_NAME);
+                groupName = intent.getStringExtra(GroupListActivity.GROUP_NAME);
 
                 if (groupName != null && groupName.equals("") == false) {
                     GroupSetting groupSetting = getGroupSetting(groupName);
-                    ((EditText) findViewById(R.id.group_name)).setText(groupSetting.getGroupName());
+                    ((EditText) findViewById(R.id.group_name)).setVisibility(View.GONE);
+                    TextView gropuNameTextView = (TextView) findViewById(R.id.group_name_text_view);
+                    gropuNameTextView.setVisibility(View.VISIBLE);
+                    gropuNameTextView.setText(groupName);
                     adapter.addContact(groupSetting.getContactList());
                 }
             } catch (IOException e) {
@@ -93,7 +99,7 @@ public class GroupSettingActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String groupName = ((EditText) findViewById(R.id.group_name)).getText().toString();
+                String groupName = GroupSettingActivity.this.groupName == null || GroupSettingActivity.this.groupName.equals("") ? ((EditText) findViewById(R.id.group_name)).getText().toString() : GroupSettingActivity.this.groupName;
                 List<Contact> contactList = adapter.getContactList();
 
 
