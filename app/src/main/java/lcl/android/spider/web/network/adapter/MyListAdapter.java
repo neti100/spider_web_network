@@ -11,34 +11,34 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import lcl.android.spider.web.network.R;
+import lcl.android.spider.web.network.activitys.MainActivity;
+import lcl.android.spider.web.network.model.GroupSetting;
 
 
 public class MyListAdapter extends BaseAdapter {
-    public ArrayList<String> album_names;
-    public ArrayList<String> photos;
+    private GroupSetting groupSetting;
 
     public Activity context;
 
     public LayoutInflater inflater;
 
-    public MyListAdapter(Activity context, ArrayList<String> album_names, ArrayList<String> photos) {
-        super();
+
+    public MyListAdapter(Activity context, GroupSetting groupSetting) {
         this.context = context;
-        this.album_names = album_names;
-        this.photos = photos;
+        this.groupSetting = groupSetting;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public int getCount() {
-        return album_names.size();
+        return groupSetting.getContactList().size();
     }
 
     public Object getItem(int position) {
-        return null;
+        return groupSetting.getContactList().get(position);
     }
 
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     public class ViewHolder {
@@ -62,8 +62,8 @@ public class MyListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertview.getTag();
         }
 
-        holder.txtViewAlbum.setText(album_names.get(position));
-        holder.txtViewPhotos.setText(photos.get(position));
+        holder.txtViewAlbum.setText(groupSetting.getContactList().get(position).getPhoneNumber());
+        holder.txtViewPhotos.setText(groupSetting.getContactList().get(position).getName());
         return convertview;
     }
 }
