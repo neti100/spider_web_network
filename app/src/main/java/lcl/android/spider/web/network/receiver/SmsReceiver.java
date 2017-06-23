@@ -28,7 +28,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import lcl.android.spider.web.network.activitys.GroupListActivity;
 import lcl.android.spider.web.network.constants.CommonConstants;
 import lcl.android.spider.web.network.model.Constants;
 import lcl.android.spider.web.network.model.Contact;
@@ -106,11 +105,17 @@ public class SmsReceiver extends BroadcastReceiver {
                 addGroup(groupName, context);
             }
 
-            String befKey = prefs.getString(CommonConstants.PREF_MESSAGE_KEY, ""); // 저장된 발송 키(들) 획득
-            if (groupName.equals(befKey) == false) { // 존재하지 않는다면 전파 수행
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(CommonConstants.PREF_MESSAGE_KEY, (secureKey + sendTime));
-                editor.commit();
+            List<String> befReceiveHistList = getReceiveHistoryList(context);
+            boolean isReceiveHist = false;
+            for (String befReceiveHist : befReceiveHistList) {
+                if (befReceiveHist.equals(secureKey + sendTime)) {
+                    isReceiveHist = true;
+                    break;
+                }
+            }
+
+            if (isReceiveHist == false) { // 존재하지 않는다면 전파 수행
+                addReceiveHistory(secureKey + sendTime, context);
 
                 TelephonyManager telephonyManager = (TelephonyManager)context.getSystemService(TELEPHONY_SERVICE);
                 Intent sentIntent = new Intent(SENT_SMS_ACTION);
@@ -190,5 +195,37 @@ public class SmsReceiver extends BroadcastReceiver {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(data, GroupSetting.class);
     }
+
+
+    // 값 불러오기
+    private List<String> getReceiveHistoryList(Context context) {
+        SharedPreferences pref = context.getSharedPreferences("pref", context.MODE_PRIVATE);
+        String receiveHistStr = pref.getString(Constants.RECEIVE_HIST_KEY, "");
+        if(receiveHistStr.length() == 0) {
+            return new LinkedList<String>();
+        }
+        return new LinkedList<String>(Arrays.asList(receiveHistStr.split(Constants.RECEIVE_HIST_TOKEN)));
+    }
+
+    // group 이름 추가하기
+    private void addReceiveHistory(String addReceiveHistory, Context context) {
+        List<String> receiveHistoryList = getReceiveHistoryList(context);
+        receiveHistoryList.add(addReceiveHistory);
+
+        String t = "";
+
+        for (String receiveHistory : receiveHistoryList) {
+            t += receiveHistory + Constants.RECEIVE_HIST_TOKEN;
+        }
+
+        SharedPreferences pref = context.getSharedPreferences("pref", context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString(Constants.RECEIVE_HIST_KEY, t);
+        editor.commit();
+    }
+
+
+
 
 }
