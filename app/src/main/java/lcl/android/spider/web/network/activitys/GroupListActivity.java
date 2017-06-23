@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -38,6 +39,12 @@ public class GroupListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        TextView textView = (TextView) findViewById(R.id.nickname);
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        String nickname = pref.getString("nickname", "");
+        textView.setText(nickname + "님~");
+
+
         // 1. group 목록을 조회한다.
         groupList = getGroupList();
 
@@ -48,6 +55,7 @@ public class GroupListActivity extends AppCompatActivity {
 
         // 3. 리스트 뷰에 어뎁터를 추가한다.
         ListView listView = (ListView) findViewById(R.id.group_list);
+
         listView.setAdapter(adapter);
 
 

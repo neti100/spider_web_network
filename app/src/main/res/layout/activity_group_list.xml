@@ -9,15 +9,32 @@
     tools:context="lcl.android.spider.web.network.activitys.GroupListActivity"
     android:orientation="vertical">
 
-    <TextView
-        android:text="그룹관리"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:gravity="center_vertical"
-        android:layout_marginLeft="5dp"
-        android:textColor="#454545"
-        android:textSize="17sp"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical">
+
+        <TextView
+            android:text="그룹관리"
+            android:layout_width="135dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:gravity="center_vertical"
+            android:textColor="#454545"
+            android:textSize="17sp"/>
+
+        <TextView
+            android:text="최환수"
+            android:id="@+id/nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical|right"
+            android:textColor="#4641D9"
+            android:layout_marginRight="25dp"/>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
