@@ -15,8 +15,7 @@ import java.util.List;
 import lcl.android.spider.web.network.R;
 import lcl.android.spider.web.network.activitys.GroupListActivity;
 import lcl.android.spider.web.network.activitys.GroupSettingActivity;
-import lcl.android.spider.web.network.activitys.MainActivity;
-import lcl.android.spider.web.network.model.GroupSetting;
+import lcl.android.spider.web.network.activitys.SenderActivity;
 
 /**
  * Created by NAVER on 2017-06-23.
@@ -64,7 +63,7 @@ public class GroupListViewAdapter extends BaseAdapter {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(GroupListViewAdapter.this.context, MainActivity.class);
+                Intent intent = new Intent(GroupListViewAdapter.this.context, SenderActivity.class);
                 intent.putExtra(GroupListActivity.GROUP_NAME, groupSettingList.get(position));
                 GroupListViewAdapter.this.context.startActivity(intent);
             }

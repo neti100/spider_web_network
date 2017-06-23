@@ -3,13 +3,13 @@ package lcl.android.spider.web.network.activitys;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,6 +27,7 @@ import lcl.android.spider.web.network.model.Constants;
 import lcl.android.spider.web.network.model.Contact;
 import lcl.android.spider.web.network.model.ContactType;
 import lcl.android.spider.web.network.model.GroupSetting;
+import lcl.android.spider.web.network.util.FontUtil;
 
 public class GroupSettingActivity extends AppCompatActivity {
 
@@ -40,6 +41,8 @@ public class GroupSettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_setting);
+        Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/NanumGothicBold.ttf");
+        FontUtil.setGlobalFont(getWindow().getDecorView(), tf);
 
         listView = (ListView) findViewById(R.id.contactList);
         adapter = new ContactListViewAdapter(listView);
@@ -54,7 +57,6 @@ public class GroupSettingActivity extends AppCompatActivity {
                 if (groupName != null && groupName.equals("") == false) {
                     GroupSetting groupSetting = getGroupSetting(groupName);
                     ((EditText) findViewById(R.id.group_name)).setText(groupSetting.getGroupName());
-                    ((TextView) findViewById(R.id.message_prefix)).setText(groupSetting.getMessagePrefix());
                     adapter.addContact(groupSetting.getContactList());
                 }
             } catch (IOException e) {
@@ -92,7 +94,6 @@ public class GroupSettingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String groupName = ((EditText) findViewById(R.id.group_name)).getText().toString();
-                String messagePrefix = ((EditText) findViewById(R.id.message_prefix)).getText().toString();
                 List<Contact> contactList = adapter.getContactList();
 
 
@@ -101,7 +102,7 @@ public class GroupSettingActivity extends AppCompatActivity {
                     return;
                 }
 
-                GroupSetting groupSetting = new GroupSetting(groupName, messagePrefix, contactList);
+                GroupSetting groupSetting = new GroupSetting(groupName, contactList);
 
                 // 그룹 저장
                 addGroup(groupName);
@@ -148,7 +149,11 @@ public class GroupSettingActivity extends AppCompatActivity {
     // group 이름 불러오기
     private List<String> getGroupList() {
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-        return new LinkedList<String>(Arrays.asList(pref.getString(Constants.GROUP_LIST_KEY, "").split(Constants.GROUP_TOKEN)));
+        String groupListStr = pref.getString(Constants.GROUP_LIST_KEY, "");
+        if(groupListStr.length() == 0) {
+            return new LinkedList<String>();
+        }
+        return new LinkedList<String>(Arrays.asList(groupListStr.split(Constants.GROUP_TOKEN)));
     }
 
     // group 이름 추가하기
@@ -180,7 +185,6 @@ public class GroupSettingActivity extends AppCompatActivity {
 
         String data = mapper.writeValueAsString(groupSetting);
 
-
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
@@ -190,7 +194,7 @@ public class GroupSettingActivity extends AppCompatActivity {
 
     private GroupSetting getGroupSetting(String groupName) throws IOException {
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-        GroupSetting groupSetting = new GroupSetting(groupName, "", null);
+        GroupSetting groupSetting = new GroupSetting(groupName, null);
         String data = pref.getString(groupSetting.getSharedPreferenceKey(), "");
 
         ObjectMapper mapper = new ObjectMapper();

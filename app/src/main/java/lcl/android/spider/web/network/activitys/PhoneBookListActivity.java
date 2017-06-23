@@ -6,7 +6,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.os.Build;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
@@ -23,6 +23,7 @@ import lcl.android.spider.web.network.R;
 import lcl.android.spider.web.network.listview.PhoneBookListViewAdapter;
 import lcl.android.spider.web.network.model.Contact;
 import lcl.android.spider.web.network.model.ContactType;
+import lcl.android.spider.web.network.util.FontUtil;
 
 public class PhoneBookListActivity extends AppCompatActivity {
     public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 8888;
@@ -57,6 +58,9 @@ public class PhoneBookListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone_book_list);
+        Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/NanumGothicBold.ttf");
+        FontUtil.setGlobalFont(getWindow().getDecorView(), tf);
+
 
         ///// 권한 있는지 확인
         // Activity에서 실행하는경우
@@ -116,7 +120,7 @@ public class PhoneBookListActivity extends AppCompatActivity {
         }
 
         ContentResolver cr = getContentResolver();
-        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC");
 
         int ididx = cursor.getColumnIndex(ContactsContract.Contacts._ID);
         int nameidx = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);

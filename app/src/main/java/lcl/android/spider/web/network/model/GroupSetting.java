@@ -11,15 +11,13 @@ import java.util.List;
 public class GroupSetting {
 
     private String groupName;
-    private String messagePrefix;
     private List<Contact> contactList;
 
     public GroupSetting() {
     }
 
-    public GroupSetting(String groupName, String messagePrefix, List<Contact> contactList) {
+    public GroupSetting(String groupName, List<Contact> contactList) {
         this.groupName = groupName;
-        this.messagePrefix = messagePrefix;
         this.contactList = contactList;
     }
 
@@ -29,14 +27,6 @@ public class GroupSetting {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
-    }
-
-    public String getMessagePrefix() {
-        return messagePrefix;
-    }
-
-    public void setMessagePrefix(String messagePrefix) {
-        this.messagePrefix = messagePrefix;
     }
 
     public List<Contact> getContactList() {

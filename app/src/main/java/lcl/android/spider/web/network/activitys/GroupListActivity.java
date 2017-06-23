@@ -2,11 +2,10 @@ package lcl.android.spider.web.network.activitys;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -17,6 +16,7 @@ import java.util.List;
 import lcl.android.spider.web.network.R;
 import lcl.android.spider.web.network.listview.GroupListViewAdapter;
 import lcl.android.spider.web.network.model.Constants;
+import lcl.android.spider.web.network.util.FontUtil;
 
 public class GroupListActivity extends AppCompatActivity {
     public static final String GROUP_NAME = "group_name";
@@ -29,6 +29,8 @@ public class GroupListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_list);
+        Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/NanumGothicBold.ttf");
+        FontUtil.setGlobalFont(getWindow().getDecorView(), tf);
     }
 
     @Override
@@ -63,7 +65,11 @@ public class GroupListActivity extends AppCompatActivity {
     // 값 불러오기
     private List<String> getGroupList() {
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-        return new LinkedList<String>(Arrays.asList(pref.getString(Constants.GROUP_LIST_KEY, "").split(Constants.GROUP_TOKEN)));
+        String groupListStr = pref.getString(Constants.GROUP_LIST_KEY, "");
+        if(groupListStr.length() == 0) {
+            return new LinkedList<String>();
+        }
+        return new LinkedList<String>(Arrays.asList(groupListStr.split(Constants.GROUP_TOKEN)));
     }
 
 }

@@ -1,5 +1,9 @@
 <resources>
 
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    </style>
+
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -33,7 +37,5 @@
         <item name="android:background">@drawable/custom_btn_type2</item>
         <item name="android:padding">10dip</item>
     </style>
-
-
 
 </resources>

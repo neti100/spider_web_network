@@ -18,24 +18,46 @@
         android:theme="@style/AppTheme">
 
 
-        <activity android:name=".activitys.GroupListActivity">
+        <activity android:name=".activitys.MainActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            android:hardwareAccelerated="false" android:theme="@style/AppBaseTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
+            android:name=".activitys.NickNameActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            android:hardwareAccelerated="false" android:theme="@style/AppBaseTheme"/>
+
+        <activity android:name=".activitys.GroupListActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            android:hardwareAccelerated="false" android:theme="@style/AppBaseTheme">
+        </activity>
+
+        <activity
             android:name=".activitys.GroupSettingActivity"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            android:hardwareAccelerated="false" android:theme="@style/AppBaseTheme"/>
 
-        <activity android:name=".activitys.PhoneBookListActivity">
+        <activity android:name=".activitys.PhoneBookListActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            android:hardwareAccelerated="false" android:theme="@style/AppBaseTheme">
         </activity>
 
+        <activity
+            android:name=".activitys.SenderActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            android:hardwareAccelerated="false" android:theme="@style/AppBaseTheme"/>
 
-        <activity android:name=".activitys.MainActivity">
-        </activity>
 
         <receiver
             android:name="lcl.android.spider.web.network.receiver.SmsReceiver">

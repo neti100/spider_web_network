@@ -8,10 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import lcl.android.spider.web.network.R;
-import lcl.android.spider.web.network.activitys.MainActivity;
 import lcl.android.spider.web.network.model.GroupSetting;
 
 
