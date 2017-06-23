@@ -163,7 +163,9 @@ public class SenderActivity extends AppCompatActivity implements View.OnClickLis
         String curTimeStr = format.format(cal.getTime());
         long curTime = System.currentTimeMillis();
         message += "\n";
-        message += "From." + nickName + "," + curTimeStr;
+        message += "From." + nickName;
+        message += "\n";
+        message += curTimeStr;
         message += "\n";
         try {
             AES256Util aes256 = new AES256Util(CommonConstants.SECURE_KEY + "*" + curTime);
