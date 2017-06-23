@@ -11,6 +11,7 @@ import java.util.List;
 public class GroupSetting {
 
     private String groupName;
+    private boolean autoSend;
     private List<Contact> contactList;
 
     public GroupSetting() {
@@ -21,12 +22,26 @@ public class GroupSetting {
         this.contactList = contactList;
     }
 
+    public GroupSetting(String groupName, List<Contact> contactList, boolean autoSend) {
+        this.groupName = groupName;
+        this.contactList = contactList;
+        this.autoSend = autoSend;
+    }
+
     public String getGroupName() {
         return groupName;
     }
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public boolean isAutoSend() {
+        return autoSend;
+    }
+
+    public void setAutoSend(boolean autoSend) {
+        this.autoSend = autoSend;
     }
 
     public List<Contact> getContactList() {

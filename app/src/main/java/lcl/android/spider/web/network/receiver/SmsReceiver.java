@@ -10,6 +10,7 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -92,29 +93,26 @@ public class SmsReceiver extends BroadcastReceiver {
             }
 
             List<String> befGroupNameList = getGroupList(context);
-
-            boolean isGroupName = false;
-            for (String befGroupName : befGroupNameList) {
-                if (groupName.equals(befGroupName)) {
-                    isGroupName = true;
-                    break;
-                }
-            }
-
-            if (isGroupName == false) {
+            if (befGroupNameList.contains(groupName) == false) {
                 addGroup(groupName, context);
+                try {
+                    addGroupSetting(new GroupSetting(groupName, null, true), context);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
 
             List<String> befReceiveHistList = getReceiveHistoryList(context);
-            boolean isReceiveHist = false;
-            for (String befReceiveHist : befReceiveHistList) {
-                if (befReceiveHist.equals(secureKey + sendTime)) {
-                    isReceiveHist = true;
-                    break;
-                }
+            boolean isReceiveHist = befReceiveHistList.contains(secureKey + sendTime);
+
+            boolean autoSend = false;
+            try {
+                autoSend = getGroupSetting(groupName, context).isAutoSend();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            if (isReceiveHist == false) { // 존재하지 않는다면 전파 수행
+            if (isReceiveHist == false && autoSend) { // 존재하지 않는다면 전파 수행
                 addReceiveHistory(secureKey + sendTime, context);
 
                 TelephonyManager telephonyManager = (TelephonyManager)context.getSystemService(TELEPHONY_SERVICE);
@@ -185,6 +183,19 @@ public class SmsReceiver extends BroadcastReceiver {
         SharedPreferences.Editor editor = pref.edit();
 
         editor.putString(Constants.GROUP_LIST_KEY, t);
+        editor.commit();
+    }
+
+    // group setting 추가하기
+    private void addGroupSetting(GroupSetting groupSetting, Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        String data = mapper.writeValueAsString(groupSetting);
+
+        SharedPreferences pref = context.getSharedPreferences("pref", context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString(groupSetting.getSharedPreferenceKey(), data);
         editor.commit();
     }
 

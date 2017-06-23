@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,6 +64,10 @@ public class GroupSettingActivity extends AppCompatActivity {
                     TextView gropuNameTextView = (TextView) findViewById(R.id.group_name_text_view);
                     gropuNameTextView.setVisibility(View.VISIBLE);
                     gropuNameTextView.setText(groupName);
+
+                    ((ToggleButton) findViewById(R.id.autoSend)).setChecked(groupSetting.isAutoSend());
+
+
                     adapter.addContact(groupSetting.getContactList());
                 }
             } catch (IOException e) {
@@ -101,6 +106,7 @@ public class GroupSettingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String groupName = GroupSettingActivity.this.groupName == null || GroupSettingActivity.this.groupName.equals("") ? ((EditText) findViewById(R.id.group_name)).getText().toString() : GroupSettingActivity.this.groupName;
                 List<Contact> contactList = adapter.getContactList();
+                boolean checked = ((ToggleButton) findViewById(R.id.autoSend)).isChecked();
 
 
                 if (groupName == null || groupName.equals("")) {
@@ -108,7 +114,7 @@ public class GroupSettingActivity extends AppCompatActivity {
                     return;
                 }
 
-                GroupSetting groupSetting = new GroupSetting(groupName, contactList);
+                GroupSetting groupSetting = new GroupSetting(groupName, contactList, checked);
 
                 // 그룹 저장
                 addGroup(groupName);
