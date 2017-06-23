@@ -96,7 +96,7 @@ public class SmsReceiver extends BroadcastReceiver {
             if (befGroupNameList.contains(groupName) == false) {
                 addGroup(groupName, context);
                 try {
-                    addGroupSetting(new GroupSetting(groupName, null, true), context);
+                    addGroupSetting(new GroupSetting(groupName, new ArrayList<Contact>(), true), context);
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
