@@ -10,11 +10,17 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,7 +28,11 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import lcl.android.spider.web.network.activitys.GroupListActivity;
 import lcl.android.spider.web.network.constants.CommonConstants;
+import lcl.android.spider.web.network.model.Constants;
+import lcl.android.spider.web.network.model.Contact;
+import lcl.android.spider.web.network.model.GroupSetting;
 import lcl.android.spider.web.network.util.AES256Util;
 
 import static android.content.Context.TELEPHONY_SERVICE;
@@ -31,10 +41,8 @@ import static android.content.Context.TELEPHONY_SERVICE;
  * Created by CHS on 2017-06-19.
  */
 public class SmsReceiver extends BroadcastReceiver {
-
     final String SENT_SMS_ACTION 			= 	"SENT_SMS_ACTION";
     final String DELIVERED_SMS_ACTION 		= 	"DELIVERED_SMS_ACTION";
-    final String numbers[] = {"01054234214","01041859056", "01094149177"};
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -52,23 +60,29 @@ public class SmsReceiver extends BroadcastReceiver {
                 message += smsMessage[i].getMessageBody().toString();
             }
 
-            String secureGroupName = ""; // 암호화된 그룹명
-            String uniqueKey = ""; // 발송에 대한 유니크 키
-            String ePattern = "(\\[(.+)?\\s,[\\d]+\\])"; // 암호화 정보를 얻기위한 패턴
+            String secureKey = ""; // 암호화된 키
+            String sendTime = ""; // 발송시각
+            String ePattern = "(\\[(.+)?\\s,([\\d]+)\\])"; // 암호화 정보를 얻기위한 패턴
             Pattern p = Pattern.compile(ePattern);
             Matcher m = p.matcher(message);
 
+
             if (m.find()) {
                 int lastIdx = m.groupCount();
-                secureGroupName = m.group(lastIdx);
-                uniqueKey = m.group(1);
+                secureKey = m.group(lastIdx - 1);
+                sendTime = m.group(lastIdx);
+
+            }
+
+            if (secureKey.isEmpty() || sendTime.isEmpty()) {
+                return;
             }
 
             String groupName = "";
             // 복호화
             try {
-                AES256Util aes256 = new AES256Util(CommonConstants.SECURE_KEY);
-                groupName = aes256.aesDecode(secureGroupName);
+                AES256Util aes256 = new AES256Util(CommonConstants.SECURE_KEY + "*" + sendTime);
+                groupName = aes256.aesDecode(secureKey);
             } catch (UnsupportedEncodingException e) {
             } catch (NoSuchAlgorithmException e) {
             } catch (InvalidKeyException e) {
@@ -78,14 +92,24 @@ public class SmsReceiver extends BroadcastReceiver {
             } catch (IllegalBlockSizeException e) {
             }
 
-            if (CommonConstants.GROUP_NAME.equals(groupName) == false) { // 그룹명이 존재하지 않으면 리턴
-                return;
+            List<String> befGroupNameList = getGroupList(context);
+
+            boolean isGroupName = false;
+            for (String befGroupName : befGroupNameList) {
+                if (groupName.equals(befGroupName)) {
+                    isGroupName = true;
+                    break;
+                }
+            }
+
+            if (isGroupName == false) {
+                addGroup(groupName, context);
             }
 
             String befKey = prefs.getString(CommonConstants.PREF_MESSAGE_KEY, ""); // 저장된 발송 키(들) 획득
-            if (uniqueKey.equals(befKey) == false) { // 존재하지 않는다면 전파 수행
+            if (groupName.equals(befKey) == false) { // 존재하지 않는다면 전파 수행
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(CommonConstants.PREF_MESSAGE_KEY, uniqueKey);
+                editor.putString(CommonConstants.PREF_MESSAGE_KEY, (secureKey + sendTime));
                 editor.commit();
 
                 TelephonyManager telephonyManager = (TelephonyManager)context.getSystemService(TELEPHONY_SERVICE);
@@ -105,18 +129,66 @@ public class SmsReceiver extends BroadcastReceiver {
                         deliveryIntents.add(deliveryPpendingIntent);
                     }
 
-                    for(String number : numbers) {
-                        smsManager.sendMultipartTextMessage(number, null, partMessage, sentIntents, deliveryIntents);
+                    try {
+                        GroupSetting groupSetting = getGroupSetting(groupName, context);
+                        for(Contact contact  : groupSetting.getContactList()) {
+                            smsManager.sendMultipartTextMessage(contact.getPurePhoneNumber(), null, partMessage, sentIntents, deliveryIntents);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+
                 } else {
-                    for(String number : numbers) {
-                        smsManager.sendTextMessage(number, null, message, sentPendingIntent, deliveryPpendingIntent);
+                    try {
+                        GroupSetting groupSetting = getGroupSetting(groupName, context);
+                        for(Contact contact  : groupSetting.getContactList()) {
+                            smsManager.sendTextMessage(contact.getPurePhoneNumber(), null, message, sentPendingIntent, deliveryPpendingIntent);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
 
             }
 
         }
+    }
+
+
+    // 값 불러오기
+    private List<String> getGroupList(Context context) {
+        SharedPreferences pref = context.getSharedPreferences("pref", context.MODE_PRIVATE);
+        String groupListStr = pref.getString(Constants.GROUP_LIST_KEY, "");
+        if(groupListStr.length() == 0) {
+            return new LinkedList<String>();
+        }
+        return new LinkedList<String>(Arrays.asList(groupListStr.split(Constants.GROUP_TOKEN)));
+    }
+
+    // group 이름 추가하기
+    private void addGroup(String groupName, Context context) {
+        List<String> groupList = getGroupList(context);
+        groupList.add(groupName);
+
+        String t = "";
+
+        for (String group : groupList) {
+            t += group + Constants.GROUP_TOKEN;
+        }
+
+        SharedPreferences pref = context.getSharedPreferences("pref", context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString(Constants.GROUP_LIST_KEY, t);
+        editor.commit();
+    }
+
+    private GroupSetting getGroupSetting(String groupName, Context context) throws IOException {
+        SharedPreferences pref = context.getSharedPreferences("pref", context.MODE_PRIVATE);
+        GroupSetting groupSetting = new GroupSetting(groupName, null);
+        String data = pref.getString(groupSetting.getSharedPreferenceKey(), "");
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(data, GroupSetting.class);
     }
 
 }

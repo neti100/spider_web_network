@@ -120,7 +120,7 @@ public class PhoneBookListActivity extends AppCompatActivity {
         }
 
         ContentResolver cr = getContentResolver();
-        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC");
+        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
         int ididx = cursor.getColumnIndex(ContactsContract.Contacts._ID);
         int nameidx = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);

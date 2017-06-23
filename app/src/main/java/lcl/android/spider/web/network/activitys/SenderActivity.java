@@ -168,9 +168,8 @@ public class SenderActivity extends AppCompatActivity implements View.OnClickLis
                 SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
                 nickName = pref.getString("nickname", "");
 
-
                 SmsManager smsManager = SmsManager.getDefault();
-                String message = createMessage(content.getText().toString());
+                String message = createMessage(content.getText().toString(), groupSetting.getGroupName());
                 ArrayList<String> partMessage = smsManager.divideMessage(message);
                 if (partMessage.size() > 1) { // 보내는 문자열 길이에 따라 보내는 방식이 다름
                     int numParts = partMessage.size();
@@ -223,7 +222,7 @@ public class SenderActivity extends AppCompatActivity implements View.OnClickLis
         super.onDestroy();
     }
 
-    private String createMessage(String message) {
+    private String createMessage(String message, String groupName) {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
         String curTimeStr = format.format(cal.getTime());
@@ -232,9 +231,8 @@ public class SenderActivity extends AppCompatActivity implements View.OnClickLis
         message += "From." + nickName + "," + curTimeStr;
         message += "\n";
         try {
-            AES256Util aes256 = new AES256Util(CommonConstants.SECURE_KEY);
-            String sendKey = CommonConstants.GROUP_NAME + "*" + curTime;
-            String encSendKey = aes256.aesEncode(sendKey);
+            AES256Util aes256 = new AES256Util(CommonConstants.SECURE_KEY + "*" + curTime);
+            String encSendKey = aes256.aesEncode(groupName);
             message += "[" + encSendKey + "," + curTime + "]";
         } catch (UnsupportedEncodingException e) {
             message = "";
