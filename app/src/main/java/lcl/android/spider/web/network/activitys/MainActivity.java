@@ -19,6 +19,7 @@ import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
@@ -34,6 +35,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import lcl.android.spider.web.network.R;
+import lcl.android.spider.web.network.adapter.MyListAdapter;
 import lcl.android.spider.web.network.constants.CommonConstants;
 import lcl.android.spider.web.network.receiver.SmsSentReceiver;
 import lcl.android.spider.web.network.util.AES256Util;
@@ -57,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Intent intent;
     private SmsSentReceiver smsSentReceiver = new SmsSentReceiver();
+    private MyListAdapter dataAdapter = null;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sendButton = (Button) findViewById(R.id.button_send);
         contactButton = (Button) findViewById(R.id.button_contacts);
 
-        receiver = (TextView) findViewById(R.id.receiver);
         content = (EditText) findViewById(R.id.content);
 
         sendButton.setOnClickListener(this);
@@ -201,7 +204,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
              // row 선택
             cursor.moveToFirst();   // 어차피 해당 id를 갖는 1개의 연락처만 선택됨
             // data추출 및 화면 출력
-            receiver.setText(cursor.getString(0));
+
+
+            ListView receiverListView = (ListView) findViewById(R.id.receiverListView);
+
+            ArrayList<String> receiverPhoneList = new ArrayList<String>();
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+            receiverPhoneList.add(cursor.getString(0));
+
+            ArrayList<String> receiverNameList = new ArrayList<String>();
+            receiverNameList.add("영희");
+            receiverNameList.add("철희");
+            receiverNameList.add("바둑이");
+            receiverNameList.add("영희");
+            receiverNameList.add("철희");
+            receiverNameList.add("바둑이");            receiverNameList.add("영희");
+            receiverNameList.add("철희");
+            receiverNameList.add("바둑이");            receiverNameList.add("영희");
+            receiverNameList.add("철희");
+            receiverNameList.add("바둑이");            receiverNameList.add("영희");
+            receiverNameList.add("철희");
+            receiverNameList.add("바둑이");            receiverNameList.add("영희");
+            receiverNameList.add("철희");
+            receiverNameList.add("바둑이");            receiverNameList.add("영희");
+            receiverNameList.add("철희");
+            receiverNameList.add("바둑이");
+
+
+            //set up our adapter and attach it to the ListView
+            MyListAdapter adapter = new MyListAdapter(this, receiverPhoneList, receiverNameList);
+            receiverListView.setAdapter(adapter);
+
         } else if(requestCode == REQUEST_FOR_VOICE && resultCode == RESULT_OK) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             content.setText(results.get(0));
