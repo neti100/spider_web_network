@@ -57,6 +57,7 @@ public class GroupListViewAdapter extends BaseAdapter {
         TextView groupName = (TextView) convertView.findViewById(R.id.group_name_text);
         Button sendButton = (Button) convertView.findViewById(R.id.group_send_button);
         Button modifyButton = (Button) convertView.findViewById(R.id.group_modify_button);
+        Button deleteButton = (Button) convertView.findViewById(R.id.group_delete_button);
 
         groupName.setText(groupSettingList.get(position));
 
@@ -75,6 +76,17 @@ public class GroupListViewAdapter extends BaseAdapter {
                 Intent intent = new Intent(GroupListViewAdapter.this.context, GroupSettingActivity.class);
                 intent.putExtra(GroupListActivity.GROUP_NAME, groupSettingList.get(position));
                 GroupListViewAdapter.this.context.startActivity(intent);
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GroupListActivity context1 = (GroupListActivity) GroupListViewAdapter.this.context;
+                context1.deleteGroupList(groupSettingList.get(position));
+
+                groupSettingList.remove(position);
+                notifyDataSetChanged();
             }
         });
 

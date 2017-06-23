@@ -16,6 +16,7 @@ import java.util.List;
 import lcl.android.spider.web.network.R;
 import lcl.android.spider.web.network.listview.GroupListViewAdapter;
 import lcl.android.spider.web.network.model.Constants;
+import lcl.android.spider.web.network.model.GroupSetting;
 import lcl.android.spider.web.network.util.FontUtil;
 
 public class GroupListActivity extends AppCompatActivity {
@@ -70,6 +71,52 @@ public class GroupListActivity extends AppCompatActivity {
             return new LinkedList<String>();
         }
         return new LinkedList<String>(Arrays.asList(groupListStr.split(Constants.GROUP_TOKEN)));
+    }
+
+
+    // 값 불러오기
+    public void deleteGroupList(String groupName) {
+        List<String> groupList = getGroupList();
+
+        groupList.remove(groupName);
+
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.remove(Constants.GROUP_LIST_KEY);
+
+        for (String s : groupList) {
+            addGroup(s);
+        }
+
+        GroupSetting groupSetting = new GroupSetting();
+        editor.remove(groupSetting.getSharedPreferenceKey());
+
+        editor.commit();
+    }
+
+
+    // group 이름 추가하기
+    private void addGroup(String groupName) {
+        String param = getIntent().getStringExtra(GroupListActivity.GROUP_NAME);
+        if (param != null && param.equals("") == false) { // 기존에 저장되어있는 이름. 추가할 필요 없음
+            return;
+        }
+
+        List<String> groupList = getGroupList();
+        groupList.add(groupName);
+
+        String t = "";
+
+        for (String group : groupList) {
+            t += group + Constants.GROUP_TOKEN;
+        }
+
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString(Constants.GROUP_LIST_KEY, t);
+        editor.commit();
     }
 
 }
